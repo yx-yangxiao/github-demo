@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    li {
+        list-style: none;
+    }
+    
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+    
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+    }
+    
+    .app {
+        /* padding: 100px; */
+        height: 100%;
+        width: 100%;
+    }
+    
+    .app-h,
+    .app-f {
+        height: 10%;
+        width: 100%;
+        background-color: yellow;
+        overflow: hidden;
+    }
+    
+    .app-m {
+        width: 100%;
+        height: 80%;
+        background-color: sandybrown;
+        /* display: flex; */
+    }
+    
+    .app-m .m-l {
+        float: left;
+        width: 20%;
+        height: 100%;
+        background-color: darkgoldenrod;
+    }
+    
+    .app-m .m-r {
+        /* float: right; */
+        height: 100%;
+        width: 80%;
+        background-color: turquoise;
+        overflow: hidden;
+    }
+    
+    .app-m .m-r .m-r-nav ul {
+        display: flex;
+    }
+    
+    .app-m .m-r .m-r-nav li {
+        margin: 20px;
+        background-color: slateblue;
+    }
+    
+    .app-m .m-r .m-r-main {
+        text-align: center;
+        background-color: violet;
+        height: 100%;
+    }
+    
+    .clearfix {
+        clear: both;
+    }
+</style>
+
+<body>
+    <div class="app">
+        <div class="app-h">header</div>
+        <div class="app-m">
+            <div class="m-l">menu</div>
+            <div class="m-r">
+                <div class="m-r-nav">
+                    <ul>
+                        <li><button>button1</button></li>
+                        <li><button>button2</button></li>
+                        <li><button>button3</button></li>
+                    </ul>
+                </div>
+                <div class="m-r-main">main</div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="app-f">footer</div>
+    </div>
+</body>
+
+</html>
