@@ -1,0 +1,51 @@
+html,
+body {
+    width: 100%;
+    height: 1
+}
+
+body {
+    background-color: silver;
+    /*设置页面背景颜色为银色*/
+}
+
+ul,
+li {
+    list-style: none;
+}
+
+#test-canvas {
+    width: 300px;
+    height: 400px;
+    background-color: cadetblue;
+}
+
+#container {
+    background-color: white;
+    width: 600px;
+    margin: auto;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 10px 10px 15px black;
+}
+
+#timeBox {
+    margin: 10px 0;
+    font-size: 18px;
+}
+
+button {
+    width: 200px;
+    height: 50px;
+    margin: 10px 0;
+    border: 0;
+    outline: none;
+    font-size: 25px;
+    font-weight: bold;
+    color: white;
+    background-color: lightcoral;
+}
+
+button:hover {
+    background-color: coral;
+}

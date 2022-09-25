@@ -5,99 +5,204 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="./index.css">
 </head>
-<style>
-    li {
-        list-style: none;
-    }
-    
-    *,
-    *::before,
-    *::after {
-        box-sizing: border-box;
-    }
-    
-    html,
-    body {
-        height: 100%;
-        margin: 0;
-    }
-    
-    .app {
-        /* padding: 100px; */
-        height: 100%;
-        width: 100%;
-    }
-    
-    .app-h,
-    .app-f {
-        height: 10%;
-        width: 100%;
-        background-color: yellow;
-        overflow: hidden;
-    }
-    
-    .app-m {
-        width: 100%;
-        height: 80%;
-        background-color: sandybrown;
-        /* display: flex; */
-    }
-    
-    .app-m .m-l {
-        float: left;
-        width: 20%;
-        height: 100%;
-        background-color: darkgoldenrod;
-    }
-    
-    .app-m .m-r {
-        /* float: right; */
-        height: 100%;
-        width: 80%;
-        background-color: turquoise;
-        overflow: hidden;
-    }
-    
-    .app-m .m-r .m-r-nav ul {
-        display: flex;
-    }
-    
-    .app-m .m-r .m-r-nav li {
-        margin: 20px;
-        background-color: slateblue;
-    }
-    
-    .app-m .m-r .m-r-main {
-        text-align: center;
-        background-color: violet;
-        height: 100%;
-    }
-    
-    .clearfix {
-        clear: both;
-    }
-</style>
 
 <body>
-    <div class="app">
-        <div class="app-h">header</div>
-        <div class="app-m">
-            <div class="m-l">menu</div>
-            <div class="m-r">
-                <div class="m-r-nav">
-                    <ul>
-                        <li><button>button1</button></li>
-                        <li><button>button2</button></li>
-                        <li><button>button3</button></li>
-                    </ul>
-                </div>
-                <div class="m-r-main">main</div>
-            </div>
+
+    <div id="container">
+        <!--页面标题-->
+        <h3>HTML5画布综合项目之拼图游戏</h3>
+        <!--水平线-->
+        <hr />
+        <!--游戏内容-->
+        <!--游戏时间-->
+        <div id="timeBox">
+            共计时间：<span id="time">00:00:00</span>
         </div>
-        <div class="clearfix"></div>
-        <div class="app-f">footer</div>
+        <!--游戏画布-->
+        <canvas id="myCanvas" width="300" height="300" style="border:1px solid">
+                    对不起，您的浏览器不支持HTML5画布API。
+                </canvas>
+        <!--游戏按钮-->
+        <div>
+            <button onclick="restartGame()">
+                        重新开始
+                    </button>
+        </div>
     </div>
 </body>
+<script>
+    // var canvas = document.getElementById('test-canvas');
+    // if (canvas.getContext) {
+    //     console.log('你的浏览器支持Canvas!');
+    // } else {
+    //     console.log('你的浏览器不支持Canvas!');
+    // }
+    /////////////////////
+    var c = document.getElementById('myCanvas'); //获取画布对象
+    var ctx = c.getContext('2d'); //获取2D的context对象
+
+    var w = 100
+    var img = new Image();
+    img.src = "./onepiece.jpg";
+
+    img.onload = function() { //当图片加载完毕时
+        generateNum(); //打乱拼图的位置
+        drawCanvas(); //在画布上绘制拼图
+    }
+
+    var num = [
+        [00, 01, 02],
+        [10, 11, 12],
+        [20, 21, 22]
+    ];
+
+    function generateNum() { //循环50次进行拼图打乱    
+        for (var i = 0; i < 50; i++) {
+            //随机抽取其中一个数据
+            var i1 = Math.round(Math.random() * 2);
+            var j1 = Math.round(Math.random() * 2);
+            //再随机抽取其中一个数据
+            var i2 = Math.round(Math.random() * 2);
+            var j2 = Math.round(Math.random() * 2);
+            //对调它们的位置
+            var temp = num[i1][j1];
+            num[i1][j1] = num[i2][j2];
+            num[i2][j2] = temp;
+        }
+    }
+
+
+
+    function drawCanvas() {
+        //清空画布
+        ctx.clearRect(0, 0, 300, 300);
+        //使用双重for循环绘制3x3的拼图
+        for (var i = 0; i < 3; i++) {
+            for (var j = 0; j < 3; j++) {
+                if (num[i][j] != 22) {
+                    //获取数值的十位数，即第几行
+                    var row = parseInt(num[i][j] / 10);
+                    //获取数组的个位数，即第几列
+                    var col = num[i][j] % 10;
+                    //在画布的相关位置上绘图
+                    ctx.drawImage(img, col * w, row * w, w, w, j * w, i * w, w, w); // w:300 / 3 = 100(小图宽度)
+                }
+            }
+        }
+    }
+
+
+
+    c.onmousedown = function(e) {
+        var bound = c.getBoundingClientRect(); //获取画布边界
+
+        var x = e.pageX - bound.left; //获取鼠标在画布上的坐标位置(x,y)
+        var y = e.pageY - bound.top;
+
+
+        var row = parseInt(y / w); //将x和y换算成几行几列
+        var col = parseInt(x / w);
+
+
+
+        if (num[row][col] != 22) { //如果当前点击的不是空白区域
+            detectBox(row, col); //移动点击的方块
+            drawCanvas(); //重新绘制画布
+            var isWin = checkWin(); //检查游戏是否成功
+
+            if (isWin) { //如果游戏成功
+                clearInterval(timer); //清除计时器
+                ctx.drawImage(img, 0, 0); //绘制完整图片
+                ctx.font = "bold 68px serif"; //设置字体为加粗、68号字，serif
+                ctx.fillStyle = "red"; //设置填充色为红色
+                ctx.fillText("游戏成功！", 20, 150); //显示提示语句
+            }
+        }
+    }
+
+
+    function detectBox(i, j) {
+        //如果点击的方块不在最上面一行
+        if (i > 0) {
+            //检测空白区域是否在当前方块的正上方
+            if (num[i - 1][j] == 22) {
+                //交换空白区域与当前方块的位置
+                num[i - 1][j] = num[i][j];
+                num[i][j] = 22;
+                return;
+            }
+        }
+        //如果点击的方块不在最下面一行
+        if (i < 2) {
+            //检测空白区域是否在当前方块的正下方
+            if (num[i + 1][j] == 22) {
+                //交换空白区域与当前方块的位置
+                num[i + 1][j] = num[i][j];
+                num[i][j] = 22;
+                return;
+            }
+        }
+        //如果点击的方块不在最左边一列
+        if (j > 0) {
+            //检测空白区域是否在当前方块的左边
+            if (num[i][j - 1] == 22) {
+                //交换空白区域与当前方块的位置
+                num[i][j - 1] = num[i][j];
+                num[i][j] = 22;
+                return;
+            }
+        }
+        //如果点击的方块不在最右边一列
+        if (j < 2) {
+            //检测空白区域是否在当前方块的右边
+            if (num[i][j + 1] == 22) {
+                //交换空白区域与当前方块的位置
+                num[i][j + 1] = num[i][j];
+                num[i][j] = 22;
+                return;
+            }
+        }
+    }
+
+    function getCurrentTime() {
+        s = parseInt(s);
+        m = parseInt(m);
+        h = parseInt(h);
+        s++;
+        if (s == 60) {
+            s = 0;
+            m++;
+        }
+        if (m == 60) {
+            m = 0;
+            h++;
+        }
+        if (s < 10) {
+            s = '0' + s;
+        }
+        if (m < 10) {
+            s = "0" + m;
+        }
+        if (h < 10) {
+            h = '0' + h;
+        }
+        time.innerHTML = h + ':' + m + ':' + s;
+    } //将时分秒转换为整数以便进行自增或赋值m = parseInt(m);h = parseInt(h);s++; //每秒变量s先自增1if (s == 60) {s = 0; //如果秒已经达到60，则归0m++; //分钟自增1} if (m == 60) {m = 0; //如果分钟也达到60，则归0h++; //小时自增1} //修改时分秒的显示效果，使其保持两位数if (s < 10)s = "0" + s;if (m < 10)m = "0" + m;if (h < 10)h = "0" + h;time.innerHTML = h + ":" + m + ":" + s; //将当前计时的时间显示在页面上}
+    function restartGame() {
+        clearInterval(timer); //清除计时器
+        s = 0; //时间清零
+        m = 0;
+        h = 0;
+        getCurrentTime(); //重新显示时间
+        timer = setInterval("getCurrentTime()", 1000);
+
+        generateNum(); //重新打乱拼图顺序
+        drawCanvas(); //绘制拼图
+
+    }
+    var timer = setInterval("getCurrentTime()", 1000);
+</script>
 
 </html>
